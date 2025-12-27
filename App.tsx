@@ -6,13 +6,11 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
 import PostDetail from './pages/PostDetail';
-import About from './pages/About';
-import Consultation from './pages/Consultation';
 
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col selection:bg-blue-50">
         {/* Skip to Content Link for Accessibility */}
         <a 
           href="#main-content" 
@@ -28,8 +26,6 @@ const App: React.FC = () => {
             <Route path="/" element={<Home />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<PostDetail />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/consultation" element={<Consultation />} />
           </Routes>
         </main>
 

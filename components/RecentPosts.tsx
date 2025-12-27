@@ -9,13 +9,12 @@ const RecentPosts: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const getRecentPosts = async () => {
-    // Fetch 3 most recent posts ordered by date descending
-    const query = `*[_type == "post"] | order(date desc, _createdAt desc) [0...3] {
+    // Fetch 2 most recent posts for a cleaner homepage look
+    const query = `*[_type == "post"] | order(date desc, _createdAt desc) [0...2] {
       "id": _id,
       title,
       date,
-      excerpt,
-      content
+      excerpt
     }`;
     
     const data = await fetchFromSanity(query);
@@ -25,21 +24,16 @@ const RecentPosts: React.FC = () => {
 
   useEffect(() => {
     getRecentPosts();
-    
-    // Poll for updates every 5 minutes
-    const interval = setInterval(getRecentPosts, 300000);
-    return () => clearInterval(interval);
   }, []);
 
   const formatDate = (dateStr: string) => {
     try {
       if (!dateStr) return '';
-      if (dateStr.includes(',')) return dateStr;
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) return dateStr;
       return date.toLocaleDateString('en-US', {
         year: 'numeric',
-        month: 'short',
+        month: 'long',
         day: 'numeric'
       });
     } catch {
@@ -48,34 +42,37 @@ const RecentPosts: React.FC = () => {
   };
 
   if (loading) return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
-      {[1, 2, 3].map(i => (
-        <div key={i} className="h-64 bg-slate-200 rounded-2xl"></div>
+    <div className="space-y-8 animate-pulse">
+      {[1, 2].map(i => (
+        <div key={i} className="space-y-3">
+          <div className="h-4 bg-slate-200 rounded w-24"></div>
+          <div className="h-6 bg-slate-200 rounded w-3/4"></div>
+          <div className="h-4 bg-slate-200 rounded w-full"></div>
+        </div>
       ))}
     </div>
   );
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div className="space-y-12">
       {posts.map(post => (
-        <article key={post.id} className="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col h-full">
-          <time dateTime={post.date} className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 block">
+        <article key={post.id} className="group">
+          <time dateTime={post.date} className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2 block">
             {formatDate(post.date)}
           </time>
-          <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-700 transition-colors">
-            {post.title}
-          </h3>
-          <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-grow line-clamp-4">
+          <Link to={`/blog/${post.id}`} className="block focus-ring rounded">
+            <h3 className="text-xl font-bold text-slate-900 group-hover:text-blue-600 transition-colors mb-2">
+              {post.title}
+            </h3>
+          </Link>
+          <p className="text-slate-600 text-base leading-relaxed mb-4 line-clamp-2">
             {post.excerpt}
           </p>
           <Link 
             to={`/blog/${post.id}`} 
-            className="inline-flex items-center text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors"
+            className="text-sm font-bold text-blue-600 hover:underline underline-offset-4 decoration-1"
           >
-            Continue Reading
-            <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
+            Read Article
           </Link>
         </article>
       ))}
