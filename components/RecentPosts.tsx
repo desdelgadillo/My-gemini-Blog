@@ -9,7 +9,6 @@ const RecentPosts: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   const getRecentPosts = async () => {
-    // Fetch 2 most recent posts for a cleaner homepage look
     const query = `*[_type == "post"] | order(date desc, _createdAt desc) [0...2] {
       "id": _id,
       title,
@@ -42,7 +41,8 @@ const RecentPosts: React.FC = () => {
   };
 
   if (loading) return (
-    <div className="space-y-8 animate-pulse">
+    <div className="space-y-8 animate-pulse" aria-busy="true">
+      <span className="sr-only">Loading recent blog posts...</span>
       {[1, 2].map(i => (
         <div key={i} className="space-y-3">
           <div className="h-4 bg-slate-200 rounded w-24"></div>
@@ -57,7 +57,7 @@ const RecentPosts: React.FC = () => {
     <div className="space-y-12">
       {posts.map(post => (
         <article key={post.id} className="group">
-          <time dateTime={post.date} className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-2 block">
+          <time dateTime={post.date} className="text-xs font-bold text-slate-600 uppercase tracking-widest mb-2 block">
             {formatDate(post.date)}
           </time>
           <Link to={`/blog/${post.id}`} className="block focus-ring rounded">
@@ -65,12 +65,13 @@ const RecentPosts: React.FC = () => {
               {post.title}
             </h3>
           </Link>
-          <p className="text-slate-600 text-base leading-relaxed mb-4 line-clamp-2">
+          <p className="text-slate-700 text-base leading-relaxed mb-4 line-clamp-2">
             {post.excerpt}
           </p>
           <Link 
             to={`/blog/${post.id}`} 
-            className="text-sm font-bold text-blue-600 hover:underline underline-offset-4 decoration-1"
+            className="text-sm font-bold text-blue-700 hover:underline underline-offset-4 decoration-1"
+            aria-label={`Read full article: ${post.title}`}
           >
             Read Article
           </Link>
