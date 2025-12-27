@@ -2,28 +2,32 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { BlogPost } from '../types';
+import { fetchFromSanity } from '../services/sanityService';
 
 const PostDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
-  const consultationUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe6kCnAw-L-RRtAQnJhDFnq2sSwyXxpSoTGh3_LyZHMLtzH9w/viewform?usp=sf_link";
+  const consultationUrl = "/consultation";
 
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const response = await fetch('./posts.json');
-        const data: BlogPost[] = await response.json();
-        const foundPost = data.find(p => p.id.toString() === id);
-        setPost(foundPost || null);
-      } catch (error) {
-        console.error("Error loading post:", error);
-      } finally {
-        setLoading(false);
-      }
+    const getPost = async () => {
+      if (!id) return;
+      
+      const query = `*[_type == "post" && _id == "${id}"][0] {
+        "id": _id,
+        title,
+        date,
+        excerpt,
+        content
+      }`;
+      
+      const data = await fetchFromSanity(query);
+      setPost(data || null);
+      setLoading(false);
     };
 
-    if (id) fetchPost();
+    getPost();
   }, [id]);
 
   if (loading) {
@@ -77,14 +81,12 @@ const PostDetail: React.FC = () => {
             <h3 className="text-xl font-bold text-blue-900 mb-2">Enjoying my perspective?</h3>
             <p className="text-blue-800 text-sm opacity-90">I host bi-weekly workshops for developers and content creators on digital inclusive design.</p>
           </div>
-          <a 
-            href={consultationUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link 
+            to={consultationUrl}
             className="px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-200 flex-shrink-0"
           >
             Join a Workshop
-          </a>
+          </Link>
         </div>
       </footer>
     </article>

@@ -2,33 +2,50 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPost } from '../types';
+import { fetchFromSanity } from '../services/sanityService';
 
 const RecentPosts: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchPosts = async () => {
-    try {
-      // Adding a cache-buster query param to simulate "watching" fresh data
-      const response = await fetch(`./posts.json?t=${Date.now()}`);
-      const data: BlogPost[] = await response.json();
-      // Sort by ID descending (assuming higher ID = newer) and take latest 3
-      const sortedPosts = data.sort((a, b) => b.id - a.id).slice(0, 3);
-      setPosts(sortedPosts);
-    } catch (error) {
-      console.error("Failed to fetch recent posts:", error);
-    } finally {
-      setLoading(false);
-    }
+  const getRecentPosts = async () => {
+    // Fetch 3 most recent posts ordered by date descending
+    const query = `*[_type == "post"] | order(date desc, _createdAt desc) [0...3] {
+      "id": _id,
+      title,
+      date,
+      excerpt,
+      content
+    }`;
+    
+    const data = await fetchFromSanity(query);
+    if (data) setPosts(data);
+    setLoading(false);
   };
 
   useEffect(() => {
-    fetchPosts();
+    getRecentPosts();
     
-    // "Watch" for updates by polling every 60 seconds
-    const interval = setInterval(fetchPosts, 60000);
+    // Poll for updates every 5 minutes
+    const interval = setInterval(getRecentPosts, 300000);
     return () => clearInterval(interval);
   }, []);
+
+  const formatDate = (dateStr: string) => {
+    try {
+      if (!dateStr) return '';
+      if (dateStr.includes(',')) return dateStr;
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return dateStr;
+    }
+  };
 
   if (loading) return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 animate-pulse">
@@ -42,13 +59,13 @@ const RecentPosts: React.FC = () => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
       {posts.map(post => (
         <article key={post.id} className="group bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all flex flex-col h-full">
-          <span className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 block">
-            {post.date}
-          </span>
+          <time dateTime={post.date} className="text-xs font-bold text-blue-600 uppercase tracking-widest mb-3 block">
+            {formatDate(post.date)}
+          </time>
           <h3 className="text-xl font-bold text-slate-900 mb-3 group-hover:text-blue-700 transition-colors">
             {post.title}
           </h3>
-          <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-grow">
+          <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-grow line-clamp-4">
             {post.excerpt}
           </p>
           <Link 
