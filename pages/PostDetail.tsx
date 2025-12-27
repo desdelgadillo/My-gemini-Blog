@@ -2,11 +2,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { BlogPost } from '../types';
-import { sanityClient, urlFor } from '../services/sanityService';
-import { PortableText } from '@portabletext/react';
 
 const PostDetail: React.FC = () => {
-  const { id: slug } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const consultationUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe6kCnAw-L-RRtAQnJhDFnq2sSwyXxpSoTGh3_LyZHMLtzH9w/viewform?usp=sf_link";
@@ -14,26 +12,19 @@ const PostDetail: React.FC = () => {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const query = `*[_type == "post" && slug.current == $slug][0] {
-          title,
-          body,
-          mainImage,
-          publishedAt,
-          excerpt,
-          "author": author->{name},
-          "categories": categories[]->{title}
-        }`;
-        const data = await sanityClient.fetch(query, { slug });
-        setPost(data);
+        const response = await fetch('./posts.json');
+        const data: BlogPost[] = await response.json();
+        const foundPost = data.find(p => p.id.toString() === id);
+        setPost(foundPost || null);
       } catch (error) {
-        console.error("Sanity fetch error:", error);
+        console.error("Error loading post:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    if (slug) fetchPost();
-  }, [slug]);
+    if (id) fetchPost();
+  }, [id]);
 
   if (loading) {
     return <div className="max-w-3xl mx-auto py-20 text-center text-slate-500">Loading post...</div>;
@@ -59,27 +50,14 @@ const PostDetail: React.FC = () => {
       
       <header className="mb-10">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg">
-            {post.author?.name?.charAt(0) || 'D'}
-          </div>
+          <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-lg">D</div>
           <div>
-            <p className="text-sm font-bold text-slate-900">{post.author?.name}</p>
-            <p className="text-xs text-slate-500">{new Date(post.publishedAt).toLocaleDateString()}</p>
+            <p className="text-sm font-bold text-slate-900">Desmond Delgadillo</p>
+            <p className="text-xs text-slate-500">{post.date}</p>
           </div>
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight mb-4">{post.title}</h1>
-        <div className="flex gap-2">
-          {post.categories?.map(cat => (
-            <span key={cat.title} className="px-3 py-1 bg-slate-100 text-xs font-semibold text-slate-600 rounded-full">#{cat.title}</span>
-          ))}
-        </div>
       </header>
-
-      {post.mainImage && (
-        <div className="rounded-3xl overflow-hidden mb-12 shadow-xl border border-slate-200">
-          <img src={urlFor(post.mainImage).width(1200).url()} alt="" className="w-full h-auto" />
-        </div>
-      )}
 
       <div className="prose prose-slate prose-lg max-w-none prose-headings:text-slate-900 prose-headings:font-bold prose-p:leading-relaxed prose-p:text-slate-700">
         {post.excerpt && (
@@ -87,8 +65,10 @@ const PostDetail: React.FC = () => {
             {post.excerpt}
           </p>
         )}
-        
-        <PortableText value={post.body} />
+        <div 
+          dangerouslySetInnerHTML={{ __html: post.content }} 
+          className="space-y-4"
+        />
       </div>
 
       <footer className="mt-16 pt-8 border-t border-slate-200">

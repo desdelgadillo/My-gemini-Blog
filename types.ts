@@ -1,18 +1,10 @@
 
 export interface BlogPost {
-  _id: string;
+  id: number;
   title: string;
-  slug: {
-    current: string;
-  };
+  date: string;
   excerpt: string;
-  body: any[]; // Portable Text is an array of objects
-  publishedAt: string;
-  author: {
-    name: string;
-  };
-  mainImage: any;
-  categories?: { title: string }[];
+  content: string;
 }
 
 export interface Project {

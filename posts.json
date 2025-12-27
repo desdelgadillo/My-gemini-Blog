@@ -1,0 +1,31 @@
+
+[
+  {
+    "id": 1,
+    "title": "My First Blog Post",
+    "date": "December 26, 2025",
+    "excerpt": "This is a quick summary of my first post where I discuss the fundamental values of digital inclusion.",
+    "content": "<p>Digital accessibility is the cornerstone of a truly inclusive society. By ensuring that our websites and applications are usable by everyone, regardless of ability, we open doors to education, employment, and social connection.</p>"
+  },
+  {
+    "id": 2,
+    "title": "How I Built This App",
+    "date": "December 27, 2025",
+    "excerpt": "A look behind the scenes of my AI project and how Gemini powers the accessibility consultation tool.",
+    "content": "<p>I used Gemini and AI Studio to create a highly accessible search tool. This project combines modern web technologies with advanced AI to provide real-time assistance to those navigating digital barriers.</p><p>The integration of the Gemini API allows for empathetic and accurate responses to complex accessibility queries, making specialized knowledge more accessible to the general public.</p>"
+  },
+  {
+    "id": 3,
+    "title": "The Future of Voice UI",
+    "date": "January 5, 2026",
+    "excerpt": "Exploring the next frontier of human-computer interaction through natural language and the Live API.",
+    "content": "<p>Voice User Interfaces (VUIs) are evolving rapidly. With the advent of multi-modal models like Gemini, the conversation between humans and machines is becoming more fluid and natural than ever before.</p><p>For users with visual or motor impairments, these advances aren't just convenient—they are life-changing, providing hands-free access to information and services that were previously cumbersome to navigate.</p>"
+  },
+  {
+    "id": 4,
+    "title": "This is the Second Test Blog",
+    "date": "January 8, 2026",
+    "excerpt": "this is the second time I'm testing, but the first time I've actually written anything.",
+    "content": "<p>Thanks for reading. If I can figure out how later, I will probably delete this blog entry. I've been experimenting all night with GitHub and learning the workflow. We'll see how it goes later.</p>"
+  }
+]

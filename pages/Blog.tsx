@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPost } from '../types';
-import { sanityClient, urlFor } from '../services/sanityService';
 
 const Blog: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -12,20 +11,11 @@ const Blog: React.FC = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const query = `*[_type == "post"] | order(publishedAt desc) {
-          _id,
-          title,
-          slug,
-          excerpt,
-          publishedAt,
-          mainImage,
-          "author": author->{name},
-          "categories": categories[]->{title}
-        }`;
-        const data = await sanityClient.fetch(query);
+        const response = await fetch('./posts.json');
+        const data = await response.json();
         setPosts(data);
       } catch (error) {
-        console.error("Sanity fetch error:", error);
+        console.error("Error loading posts:", error);
       } finally {
         setIsLoading(false);
       }
@@ -77,31 +67,14 @@ const Blog: React.FC = () => {
       ) : filteredPosts.length > 0 ? (
         <div className="grid grid-cols-1 gap-12">
           {filteredPosts.map((post) => (
-            <article key={post._id} className="group flex flex-col md:flex-row gap-8 items-start">
-              <div className="w-full md:w-64 flex-shrink-0 overflow-hidden rounded-2xl aspect-[16/9] md:aspect-square border border-slate-100 shadow-sm">
-                {post.mainImage ? (
-                  <img 
-                    src={urlFor(post.mainImage).width(600).height(600).url()} 
-                    alt="" 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-slate-200 flex items-center justify-center">No Image</div>
-                )}
-              </div>
+            <article key={post.id} className="group flex flex-col md:flex-row gap-8 items-start border-b border-slate-100 pb-12 last:border-0">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-3">
                   <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">
-                    {new Date(post.publishedAt).toLocaleDateString()}
+                    {post.date}
                   </span>
-                  <span className="text-slate-300 text-xs">•</span>
-                  <div className="flex gap-2">
-                    {post.categories?.map(cat => (
-                      <span key={cat.title} className="text-xs text-slate-500 font-medium">#{cat.title}</span>
-                    ))}
-                  </div>
                 </div>
-                <Link to={`/blog/${post.slug.current}`} className="block focus-ring rounded">
+                <Link to={`/blog/${post.id}`} className="block focus-ring rounded">
                   <h2 className="text-2xl font-bold text-slate-900 group-hover:text-blue-700 transition-colors mb-3 leading-tight">
                     {post.title}
                   </h2>
@@ -110,7 +83,7 @@ const Blog: React.FC = () => {
                   {post.excerpt}
                 </p>
                 <Link 
-                  to={`/blog/${post.slug.current}`} 
+                  to={`/blog/${post.id}`} 
                   className="inline-flex items-center text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors"
                 >
                   Read Article

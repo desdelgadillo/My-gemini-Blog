@@ -1,12 +1,13 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import RecentPosts from '../components/RecentPosts';
 
 const Home: React.FC = () => {
   const consultationUrl = "https://docs.google.com/forms/d/e/1FAIpQLSe6kCnAw-L-RRtAQnJhDFnq2sSwyXxpSoTGh3_LyZHMLtzH9w/viewform?usp=sf_link";
 
   return (
-    <div className="space-y-20 animate-in fade-in duration-700">
+    <div className="space-y-20 animate-in fade-in duration-700 pb-20">
       {/* Hero Section */}
       <section className="relative overflow-hidden pt-16 pb-12 lg:pt-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -32,7 +33,7 @@ const Home: React.FC = () => {
                 to="/blog" 
                 className="inline-flex items-center px-6 py-3 border border-slate-300 text-base font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 transition-all focus-ring"
               >
-                Read My Blog
+                Browse All Posts
               </Link>
             </div>
           </div>
@@ -76,6 +77,33 @@ const Home: React.FC = () => {
               Helping professionals and students integrate refreshable braille displays into their educational and work environments.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Latest Blog Posts Section */}
+      <section className="space-y-10">
+        <div className="flex items-end justify-between">
+          <div>
+            <h2 className="text-3xl font-bold text-slate-900 mb-2">Latest Insights</h2>
+            <p className="text-slate-600">Fresh thoughts on accessibility, AI, and assistive technology.</p>
+          </div>
+          <Link to="/blog" className="hidden md:flex items-center text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">
+            View the archive
+            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        </div>
+        
+        <RecentPosts />
+        
+        <div className="md:hidden text-center">
+           <Link to="/blog" className="inline-flex items-center text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors">
+            View all articles
+            <svg className="ml-1 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
         </div>
       </section>
     </div>
