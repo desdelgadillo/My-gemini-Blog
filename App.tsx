@@ -6,6 +6,8 @@ import Footer from './components/Footer';
 import Home from './pages/Home';
 import Blog from './pages/Blog';
 import PostDetail from './pages/PostDetail';
+import About from './pages/About';
+import Consultation from './pages/Consultation';
 
 const App: React.FC = () => {
   return (
@@ -24,8 +26,10 @@ const App: React.FC = () => {
         <main id="main-content" className="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<PostDetail />} />
+            <Route path="/consultation" element={<Consultation />} />
           </Routes>
         </main>
 
