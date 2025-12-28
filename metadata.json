@@ -1,8 +1,5 @@
 {
   "name": "Desmond Delgadillo Portfolio",
-  "description": "A modern, accessible personal portfolio and blog for an Assistive Technology Trainer, built with React, Tailwind, and Gemini API integration.",
-  "requestFramePermissions": [
-    "camera",
-    "microphone"
-  ]
+  "description": "The professional vanilla JS portfolio and accessibility blog of Desmond Delgadillo, Assistive Technology Trainer.",
+  "requestFramePermissions": []
 }
