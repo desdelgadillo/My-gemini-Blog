@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogPost } from '../types';
@@ -7,16 +6,15 @@ import { fetchFromSanity } from '../services/sanityService';
 const Blog: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [search, setSearch] = useState('');
 
   useEffect(() => {
     const getPosts = async () => {
+      // Query for posts. Using standard blog order (newest first).
       const query = `*[_type == "post"] | order(date desc, _createdAt desc) {
         "id": _id,
         title,
         date,
-        excerpt,
-        content
+        excerpt
       }`;
       const data = await fetchFromSanity(query);
       if (data) {
@@ -28,15 +26,9 @@ const Blog: React.FC = () => {
     getPosts();
   }, []);
 
-  const filteredPosts = posts.filter(p => 
-    p.title?.toLowerCase().includes(search.toLowerCase()) || 
-    p.excerpt?.toLowerCase().includes(search.toLowerCase())
-  );
-
   const formatDate = (dateStr: string) => {
     try {
       if (!dateStr) return '';
-      if (dateStr.includes(',')) return dateStr; 
       const date = new Date(dateStr);
       if (isNaN(date.getTime())) return dateStr;
       return date.toLocaleDateString('en-US', {
@@ -50,84 +42,51 @@ const Blog: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-12 animate-in slide-in-from-bottom-4 duration-500">
-      <header className="mb-12">
-        <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Perspective on Accessibility</h1>
-        <p className="text-lg text-slate-700 max-w-2xl">Sharing insights, news, and tutorials on the intersection of disability and digital technology.</p>
-        
-        <div className="mt-8 relative max-w-md">
-          <label htmlFor="blog-search" className="sr-only">Search blog posts</label>
-          <input
-            id="blog-search"
-            type="text"
-            placeholder="Search posts..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-slate-300 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all shadow-sm"
-          />
-          <div className="absolute right-4 top-3.5 h-5 w-5 text-slate-500 pointer-events-none">
-            <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </div>
-
-        {/* SR-only Announcement of Search Results */}
-        <div className="sr-only" role="status" aria-live="polite">
-          {search ? `${filteredPosts.length} posts found for "${search}"` : ''}
-        </div>
+    <div className="max-w-4xl mx-auto py-12 md:py-24 animate-in">
+      <header className="mb-20">
+        <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 tracking-tight">Perspective on Accessibility</h1>
+        <p className="text-xl text-slate-600 max-w-2xl font-medium leading-relaxed">Insights, news, and technical tutorials from the intersection of disability and digital technology.</p>
       </header>
 
       {isLoading ? (
-        <div className="space-y-12" aria-busy="true">
-          <span className="sr-only">Loading blog posts...</span>
+        <div className="space-y-16 py-10">
           {[1, 2, 3].map(i => (
-            <div key={i} className="animate-pulse flex flex-col gap-4">
-              <div className="h-4 bg-slate-200 rounded w-24"></div>
-              <div className="h-8 bg-slate-200 rounded w-3/4"></div>
-              <div className="h-4 bg-slate-200 rounded w-full"></div>
+            <div key={i} className="animate-pulse space-y-6">
+              <div className="h-4 bg-slate-100 rounded w-24"></div>
+              <div className="h-10 bg-slate-100 rounded w-3/4"></div>
+              <div className="h-20 bg-slate-100 rounded w-full"></div>
             </div>
           ))}
         </div>
-      ) : filteredPosts.length > 0 ? (
-        <div className="grid grid-cols-1 gap-12">
-          {filteredPosts.map((post) => (
-            <article key={post.id} className="group flex flex-col gap-4 items-start border-b border-slate-100 pb-12 last:border-0">
-              <time dateTime={post.date} className="text-xs font-bold text-blue-700 uppercase tracking-widest">
+      ) : (
+        <div className="space-y-20">
+          {posts.map((post) => (
+            <article key={post.id} className="group border-b border-slate-100 pb-16 last:border-0">
+              <time dateTime={post.date} className="text-xs font-black text-blue-700 uppercase tracking-widest mb-4 block">
                 {formatDate(post.date)}
               </time>
-              <div className="space-y-3">
-                <Link to={`/blog/${post.id}`} className="block focus-ring rounded group">
-                  <h2 className="text-2xl md:text-3xl font-bold text-slate-900 group-hover:text-blue-700 transition-colors leading-tight">
-                    {post.title}
-                  </h2>
+              <h2 className="text-3xl md:text-4xl font-black text-slate-900 mb-6 group-hover:text-blue-700 transition-colors leading-tight">
+                <Link to={`/blog/${post.id}`} className="focus-ring rounded-lg">
+                  {post.title}
                 </Link>
-                <p className="text-slate-700 leading-relaxed text-lg line-clamp-3">
-                  {post.excerpt}
-                </p>
-              </div>
+              </h2>
+              <p className="text-lg md:text-xl text-slate-600 font-medium leading-relaxed mb-10 max-w-3xl">
+                {post.excerpt || "Explore technical insights and the latest news on digital inclusion and assistive technology."}
+              </p>
               <Link 
                 to={`/blog/${post.id}`} 
-                className="inline-flex items-center text-sm font-bold text-slate-900 hover:text-blue-600 transition-colors group"
-                aria-label={`Read full article: ${post.title}`}
+                className="inline-flex items-center text-lg font-bold text-blue-700 hover:text-blue-900 transition-all gap-2 group/link"
               >
-                Read Article
-                <svg className="ml-2 w-4 h-4 transition-transform group-hover:translate-x-1" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
+                <span>Read more</span>
+                <svg className="w-5 h-5 group-hover/link:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </Link>
             </article>
           ))}
-        </div>
-      ) : (
-        <div className="text-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-300">
-          <p className="text-slate-700 font-medium text-lg">No posts match your search for "{search}".</p>
-          <button 
-            onClick={() => setSearch('')}
-            className="mt-4 px-6 py-2 bg-white border border-slate-300 rounded-lg text-blue-700 font-bold hover:bg-slate-50 transition-all focus-ring"
-          >
-            Clear Search
-          </button>
+          {posts.length === 0 && (
+            <div className="text-center py-20 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+               <p className="text-slate-500 font-medium">No posts found in Sanity. Check your dataset configuration.</p>
+            </div>
+          )}
         </div>
       )}
     </div>
