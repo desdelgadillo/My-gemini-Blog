@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NAV_ITEMS } from '../constants';
@@ -9,9 +8,12 @@ const Navbar: React.FC = () => {
 
   const renderLink = (item: { label: string, path: string }, isMobile: boolean = false) => {
     const isExternal = item.path.startsWith('http');
+    // For HashRouter, pathname still works the same way
+    const isActive = location.pathname === item.path;
+    
     const baseClass = isMobile 
-      ? `block px-3 py-2 rounded-md text-base font-medium ${location.pathname === item.path ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`
-      : `text-sm font-medium transition-colors hover:text-blue-600 focus-ring rounded p-1 ${location.pathname === item.path ? 'text-blue-600 underline underline-offset-8 decoration-2' : 'text-slate-600'}`;
+      ? `block px-3 py-2 rounded-md text-base font-medium ${isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'}`
+      : `text-sm font-medium transition-colors hover:text-blue-600 focus-ring rounded p-1 ${isActive ? 'text-blue-600 underline underline-offset-8 decoration-2' : 'text-slate-600'}`;
 
     if (isExternal) {
       return (

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -29,7 +29,7 @@ const App: React.FC = () => {
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<PostDetail />} />
             <Route path="/consultation" element={<Consultation />} />
-            {/* Fallback to Home for unmatched routes ensures content always renders */}
+            {/* Fallback ensures content always renders regardless of the path */}
             <Route path="*" element={<Home />} />
           </Routes>
         </main>
