@@ -1,10 +1,9 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
 const Home: React.FC = () => {
   return (
-    <div className="max-w-4xl mx-auto py-12 md:py-24 space-y-24 animate-in fade-in duration-700">
+    <div className="max-w-4xl mx-auto py-12 md:py-24 space-y-24 animate-in">
       {/* Hero Section */}
       <section className="space-y-10" aria-labelledby="hero-heading">
         <div className="space-y-6">

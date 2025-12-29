@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -22,13 +22,15 @@ const App: React.FC = () => {
 
         <Navbar />
         
-        <main id="main-content" className="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full" tabIndex={-1}>
+        <main id="main-content" className="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full outline-none" tabIndex={-1}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:id" element={<PostDetail />} />
             <Route path="/consultation" element={<Consultation />} />
+            {/* Fallback to Home for unmatched routes ensures content always renders */}
+            <Route path="*" element={<Home />} />
           </Routes>
         </main>
 
